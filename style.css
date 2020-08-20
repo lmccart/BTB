@@ -1,12 +1,162 @@
 /* CSS files add styling rules to your content */
 
 body {
-  font-family: "Benton Sans", "Helvetica Neue", helvetica, arial, sans-serif;
+  font-family: 'Work Sans', 'Helvetica Neue', helvetica, arial, sans-serif;
   margin: 0;
   padding: 0;
+  height: 100vh;
 }
+
 
 iframe {
   width: 100%;
-  height: 100vh;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
+
+
+#overlay {
+  width: 100%;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: rgba(255, 255, 255, 0.9);
+  display: none;
+  z-index: 3;
+}
+
+#notif-holder {
+  width: 90%;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 5%;
+  z-index: 1;
+  font-size: 12em;
+  text-align: center;
+  display: none;
+  pointer-events: none;
+}
+
+#notif {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.4);
+  height: 100%;
+}
+
+#controls {
+  position: absolute;
+  left: 20%;
+  bottom: 1vh;
+  text-align: center;
+  z-index: 2;
+  display: none;
+}
+
+#controls ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.icon-flower {
+  -webkit-mask: url('assets/flower.svg');
+  mask: url('assets/flower.svg');
+}
+.icon-flower2 { 
+  -webkit-mask: url('assets/flower2.svg');
+  mask: url('assets/flower2.svg');
+}
+
+.icon-holder {
+  width: 54px;
+  height: 54px;
+  text-align: center;
+  display: inline-block;
+}
+
+.icon {
+  width: 50px;
+  height: 50px;
+  background: white;
+  mask-size: cover;
+  -webkit-mask-size: cover;
+  display: flex;
+  cursor: pointer;
+  margin: 2px auto;
+}
+.icon:hover,
+.icon:focus,
+.icon-open {
+  background: #d1dbe8;
+  width: 54px;
+  height: 54px;
+  margin: 0 auto;
+}
+
+#prompt-holder, #pause-holder {
+  position: absolute;
+  left: 20%;
+  bottom: 5em;
+  z-index: 2;
+  /* display: none; */
+  background:rgba(255, 255, 255, 0.9);
+  padding: 1.25em 1.75em 1.25em 1.25em;
+  display: none;
+}
+
+
+#prompt-response {
+  font-family: 'Work Sans', 'Helvetica Neue', helvetica, arial, sans-serif;
+  font-size: 1em;
+  width: 100%;
+  padding: 0;
+  outline: 0;
+  border: 0;
+  border-bottom: 1px dotted black;
+  margin-top: 0.5em;
+  background: none;
+}
+
+#prompt-thankyou {
+  display: none;
+}
+
+#pause-response {
+  font-family: 'Work Sans', 'Helvetica Neue', helvetica, arial, sans-serif;
+  font-size: 1em;
+  width: 50%;
+  padding: 0;
+  outline: 0;
+  border: 0;
+  border-bottom: 1px solid black;
+  margin-top: 0.5em;
+  background: none;
+}
+
+.x {
+  position: absolute;
+  top: 0.5em;
+  right: 0.7em;
+  cursor: pointer;
+  color: gray;
+}
+
+.x:hover {
+  color: black;
+}
+
+/* @font-face {
+  font-family: 'Carrie';
+  src: url("assets/VTCCarrie-Regular.eot") format("eot"),
+    url("assets/VTCCarrie-Regular.otf") format("otf"),
+    url("assets/VTCCarrie-Regular.ttf") format("ttf"),
+    url("assets/VTCCarrie-Regular.woff") format("woff"),
+    url("assets/VTCCarrie-Regular.woff2") format("woff2")
+} */
