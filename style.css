@@ -66,7 +66,7 @@ iframe {
   bottom: 1vh;
   text-align: center;
   z-index: 2;
-  /* display: none;  TEMP */
+  display: none;
 }
 
 #controls-secondary {
@@ -75,7 +75,7 @@ iframe {
   bottom: 1vh;
   text-align: center;
   z-index: 2;
-  /* display: none;  TEMP */
+  display: none;
 }
 
 #controls ul, #controls-secondary ul {
@@ -118,6 +118,7 @@ iframe {
   height: 54px;
   text-align: center;
   display: inline-block;
+  position: relative;
 }
 
 .icon {
@@ -138,6 +139,21 @@ iframe {
   height: 54px;
   margin: 0 auto;
 }
+
+.icon-label {
+  display: none;
+  position: absolute;
+  top: -1.8em;
+  left: -25px;
+  z-index: -1;
+  color: rgba(107, 0, 0, 1.0);
+  width: 100px;
+}
+
+.icon:hover + .icon-label {
+  display: block;
+}
+
 
 #prompt-holder, #pause-holder {
   position: absolute;

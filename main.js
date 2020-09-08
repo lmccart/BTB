@@ -26,6 +26,7 @@ db.collection('messages').where('timestamp', '>', now).onSnapshot({}, function(s
     if (change.type === 'added') {
       let msg = change.doc.data();
       if (msg.type === 'pause') pause(msg);
+      else if (msg.type === 'play') playMessage(msg.val);
     }
   });
 });
@@ -38,6 +39,7 @@ $('#pause-holder .x').click(closePause);
 $('#prompt-holder .x').click(closePrompt);
 $('#pause-response').keypress(pauseKey);
 $('#prompt-response').keypress(promptKey);
+$('.speak').click(triggerSpeak);
 
 
 function sendMessage(type, val) {
@@ -81,6 +83,7 @@ function speakerChange(e) {
 function joined(e) {
   userId = e.id;
   $('#controls').show();
+  $('#controls-secondary').show();
 }
 
 
@@ -90,15 +93,19 @@ function displayPrompt() {
     db.collection('prompts').get().then(function(querySnapshot) {
       let random = Math.floor(Math.random() * querySnapshot.docs.length);
       let msg = querySnapshot.docs[random].data().text;
-      $('#notif').text(msg);
-      $('#notif-holder').stop().fadeIn(300).delay(4000).fadeOut(300);
-      speak(msg);
-      console.log("DISPLAY "+msg)
+      playMessage(msg);
     })
     lastPrompt = now;
   } else {
     console.log('TOO SOON');
   }
+}
+
+function playMessage(msg) {
+  $('#notif').text(msg);
+  $('#notif-holder').stop().fadeIn(300).delay(4000).fadeOut(300);
+  speak(msg);
+  console.log('playMessage: ' + msg);
 }
 
 function pauseAsk() {
@@ -162,6 +169,11 @@ function closePrompt() {
 function closePause() {
   $('#pause-holder').hide();
   $('#pause .icon').removeClass('icon-open');
+}
+
+function triggerSpeak(e) {
+  const msg = $(this).data('msg');
+  sendMessage('play', msg);
 }
 
 function speak(msg) {
