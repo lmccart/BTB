@@ -69,19 +69,48 @@ iframe {
   /* display: none;  TEMP */
 }
 
-#controls ul {
+#controls-secondary {
+  position: absolute;
+  right: 20%;
+  bottom: 1vh;
+  text-align: center;
+  z-index: 2;
+  /* display: none;  TEMP */
+}
+
+#controls ul, #controls-secondary ul {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.icon-flower {
-  -webkit-mask: url('assets/flower.svg');
-  mask: url('assets/flower.svg');
+.icon-flower1 {
+  -webkit-mask: url('assets/flower1.svg');
+  mask: url('assets/flower1.svg');
 }
 .icon-flower2 { 
   -webkit-mask: url('assets/flower2.svg');
   mask: url('assets/flower2.svg');
+}
+.icon-flower3 { 
+  -webkit-mask: url('assets/flower3.svg');
+  mask: url('assets/flower3.svg');
+}
+.icon-flower4 { 
+  -webkit-mask: url('assets/flower4.svg');
+  mask: url('assets/flower4.svg');
+}
+.icon-flower5 { 
+  -webkit-mask: url('assets/flower5.svg');
+  mask: url('assets/flower5.svg');
+}
+.icon-flower6 { 
+  -webkit-mask: url('assets/flower6.svg');
+  mask: url('assets/flower6.svg');
+}
+.icon-flower7 { 
+  -webkit-mask: url('assets/flower7.svg');
+  mask: url('assets/flower7.svg');
 }
 
 .icon-holder {
