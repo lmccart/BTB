@@ -23,13 +23,13 @@ iframe {
   position: absolute;
   top: 0;
   left: 0;
-  background: rgba(134, 103, 172, 0.9);
+  background: rgba(107, 0, 0, 0.9);
   display: none;
   z-index: 3;
 }
 
 #timer {
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.2);
   font-size: 20vw;
   display: flex;
   align-items: center;
@@ -56,7 +56,7 @@ iframe {
   align-items: center;
   justify-content: center;
   text-align: center;
-  color: rgba(134, 103, 172, 0.5);
+  color: rgba(107, 0, 0, 0.5);
   height: 100%;
 }
 
@@ -104,7 +104,7 @@ iframe {
 .icon:hover,
 .icon:focus,
 .icon-open {
-  background: rgba(134, 103, 172, 0.9);
+  background: rgba(107, 0, 0, 0.9);
   width: 54px;
   height: 54px;
   margin: 0 auto;
@@ -117,7 +117,7 @@ iframe {
   z-index: 2;
   /* display: none; */
   color: white;
-  background:rgba(134, 103, 172, 0.9);
+  background:rgba(107, 0, 0, 0.9);
   padding: 1.25em 1.75em 1.25em 1.25em;
   display: none;
 }

@@ -30,7 +30,7 @@ db.collection('messages').where('timestamp', '>', now).onSnapshot({}, function(s
   });
 });
 
-// setInterval(displayPrompt, 10000);
+// setInterval(displayPrompt, 8000);
 
 $('#pause').click(pauseAsk);
 $('#prompt').click(promptAsk);
