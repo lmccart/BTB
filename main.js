@@ -30,6 +30,7 @@ db.collection('messages').where('timestamp', '>', now).onSnapshot({}, function(s
   });
 });
 
+// setInterval(displayPrompt, 10000);
 
 $('#pause').click(pauseAsk);
 $('#prompt').click(promptAsk);
@@ -82,17 +83,17 @@ function joined(e) {
   $('#controls').show();
 }
 
-// setInterval(displayPrompt, 5*60*1000);
 
 function displayPrompt() {
-  console.log("DISPLAY")
   let now = new Date().getTime();
-  if (now - lastPrompt > 4*60*1000) {
+  if (now - lastPrompt > 3*60*1000) {
     db.collection('prompts').get().then(function(querySnapshot) {
       let random = Math.floor(Math.random() * querySnapshot.docs.length);
       let msg = querySnapshot.docs[random].data().text;
       $('#notif').text(msg);
-      $('#notif-holder').stop().fadeIn(1000).delay(5000).fadeOut(1000);
+      $('#notif-holder').stop().fadeIn(300).delay(4000).fadeOut(300);
+      speak(msg);
+      console.log("DISPLAY "+msg)
     })
     lastPrompt = now;
   } else {
@@ -161,6 +162,12 @@ function closePrompt() {
 function closePause() {
   $('#pause-holder').hide();
   $('#pause .icon').removeClass('icon-open');
+}
+
+function speak(msg) {
+  const utter = new SpeechSynthesisUtterance(msg);
+  utter.rate = 0.9;
+  window.speechSynthesis.speak(utter);
 }
 
 function msToHms(d) {
