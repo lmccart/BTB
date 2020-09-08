@@ -23,9 +23,19 @@ iframe {
   position: absolute;
   top: 0;
   left: 0;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(134, 103, 172, 0.9);
   display: none;
   z-index: 3;
+}
+
+#timer {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 20vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 100%;
 }
 
 #notif-holder {
@@ -46,7 +56,7 @@ iframe {
   align-items: center;
   justify-content: center;
   text-align: center;
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(134, 103, 172, 0.5);
   height: 100%;
 }
 
@@ -56,7 +66,7 @@ iframe {
   bottom: 1vh;
   text-align: center;
   z-index: 2;
-  display: none;
+  /* display: none;  TEMP */
 }
 
 #controls ul {
@@ -94,7 +104,7 @@ iframe {
 .icon:hover,
 .icon:focus,
 .icon-open {
-  background: #d1dbe8;
+  background: rgba(134, 103, 172, 0.9);
   width: 54px;
   height: 54px;
   margin: 0 auto;
@@ -106,7 +116,8 @@ iframe {
   bottom: 5em;
   z-index: 2;
   /* display: none; */
-  background:rgba(255, 255, 255, 0.9);
+  color: white;
+  background:rgba(134, 103, 172, 0.9);
   padding: 1.25em 1.75em 1.25em 1.25em;
   display: none;
 }
@@ -115,11 +126,12 @@ iframe {
 #prompt-response {
   font-family: 'Work Sans', 'Helvetica Neue', helvetica, arial, sans-serif;
   font-size: 1em;
+  color: white;
   width: 100%;
   padding: 0;
   outline: 0;
   border: 0;
-  border-bottom: 1px dotted black;
+  border-bottom: 1px dotted white;
   margin-top: 0.5em;
   background: none;
 }
@@ -131,11 +143,12 @@ iframe {
 #pause-response {
   font-family: 'Work Sans', 'Helvetica Neue', helvetica, arial, sans-serif;
   font-size: 1em;
+  color: white;
   width: 50%;
   padding: 0;
   outline: 0;
   border: 0;
-  border-bottom: 1px solid black;
+  border-bottom: 1px dotted white;
   margin-top: 0.5em;
   background: none;
 }
@@ -145,11 +158,11 @@ iframe {
   top: 0.5em;
   right: 0.7em;
   cursor: pointer;
-  color: gray;
+  color: #ABABAB;
 }
 
 .x:hover {
-  color: black;
+  color: white;
 }
 
 /* @font-face {

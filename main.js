@@ -1,5 +1,7 @@
 let userId;
 let lastPrompt = 0;
+let endTimer = 0;
+let endInterval = false;
 
 const domain = 'meet.jit.si';
 const options = {
@@ -43,6 +45,9 @@ function sendMessage(type, val) {
 }
 
 function pause(msg) {
+  if (endInterval) clearInterval(endInterval);
+  endTimer = performance.now() + msg.val;
+  $('#timer').text(msToHms(msg.val));
   $('#overlay').fadeIn(0).delay(msg.val).fadeOut(0);
   api.isAudioMuted().then(muted => {
     if (!muted) api.executeCommand('toggleAudio');
@@ -50,6 +55,10 @@ function pause(msg) {
   setTimeout(function() {
     api.executeCommand('toggleAudio');
   }, msg.val);
+  endInterval = setInterval(function() { 
+    const remaining = endTimer - performance.now();
+    $('#timer').text(msToHms(remaining));
+  });
 }
 
 
@@ -78,12 +87,12 @@ function joined(e) {
 function displayPrompt() {
   console.log("DISPLAY")
   let now = new Date().getTime();
-  if (now - lastPrompt > 60*1000) {
+  if (now - lastPrompt > 4*60*1000) {
     db.collection('prompts').get().then(function(querySnapshot) {
       let random = Math.floor(Math.random() * querySnapshot.docs.length);
       let msg = querySnapshot.docs[random].data().text;
       $('#notif').text(msg);
-      $('#notif-holder').stop().fadeIn(0).delay(5000).fadeOut(0);
+      $('#notif-holder').stop().fadeIn(1000).delay(5000).fadeOut(1000);
     })
     lastPrompt = now;
   } else {
@@ -152,4 +161,15 @@ function closePrompt() {
 function closePause() {
   $('#pause-holder').hide();
   $('#pause .icon').removeClass('icon-open');
+}
+
+function msToHms(d) {
+  d = Number(d) / 1000;
+  let h = Math.floor(d / 3600);
+  let m = Math.floor(d % 3600 / 60);
+  let s = Math.floor(d % 3600 % 60);
+
+  let time =  String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+  if (h > 0) time = String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+  return time;
 }
