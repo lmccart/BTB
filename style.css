@@ -16,6 +16,28 @@ iframe {
   left: 0;
 }
 
+#join {
+  width: 30%;
+  position: absolute;
+  top: 45%;
+  left: 35%;
+  background: rgba(107, 0, 0, 1);
+  color: white;
+  padding: 1em;
+  text-align: center;
+
+}
+
+#intro {
+  width: 50%;
+  position: absolute;
+  top: 12vh;
+  left: 25%;
+  background: rgba(107, 0, 0, 1);
+  color: white;
+  padding: 1em;
+  display: none;
+}
 
 #overlay {
   width: 100%;

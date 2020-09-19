@@ -33,6 +33,7 @@ db.collection('messages').where('timestamp', '>', now).onSnapshot({}, function(s
 
 // setInterval(displayPrompt, 8000);
 
+$('#intro .x').click(closeIntro);
 $('#pause').click(pauseAsk);
 $('#prompt').click(promptAsk);
 $('#pause-holder .x').click(closePause);
@@ -82,6 +83,9 @@ function speakerChange(e) {
 
 function joined(e) {
   userId = e.id;
+
+  $('#join').hide();
+  $('#intro').show();
   $('#controls').show();
   $('#controls-secondary').show();
 }
@@ -159,6 +163,10 @@ function promptKey(e) {
       closeAsk();
     }
   }
+}
+
+function closeIntro() {
+  $('#intro').hide();
 }
 
 function closePrompt() {
