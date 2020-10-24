@@ -3,6 +3,10 @@ let lastPrompt = 0;
 let endTimer = 0;
 let endInterval = false;
 
+if (window.location.hash.includes('#guide')) {
+  $('#guide-holder').show();
+}
+
 const domain = 'meet.jit.si';
 const options = {
   roomName: 'BTB Session 02 (20 August 2020)',
@@ -26,7 +30,8 @@ db.collection('messages').where('timestamp', '>', now).onSnapshot({}, function(s
     if (change.type === 'added') {
       let msg = change.doc.data();
       if (msg.type === 'pause') pause(msg);
-      else if (msg.type === 'play') playMessage(msg.val);
+      else if (msg.type === 'play') playMessage(msg.val, true);
+      else if (msg.type === 'guide') speak(msg.val);
     }
   });
 });
@@ -41,6 +46,7 @@ $('#prompt-holder .x').click(closePrompt);
 $('#pause-response').keypress(pauseKey);
 $('#prompt-response').keypress(promptKey);
 $('.speak').click(triggerSpeak);
+$('#speak-guide').click(guide);
 
 
 function sendMessage(type, val) {
@@ -97,7 +103,7 @@ function displayPrompt() {
     db.collection('prompts').get().then(function(querySnapshot) {
       let random = Math.floor(Math.random() * querySnapshot.docs.length);
       let msg = querySnapshot.docs[random].data().text;
-      playMessage(msg);
+      playMessage(msg, false);
     })
     lastPrompt = now;
   } else {
@@ -105,10 +111,10 @@ function displayPrompt() {
   }
 }
 
-function playMessage(msg) {
+function playMessage(msg, doSpeak) {
   $('#notif').text(msg);
   $('#notif-holder').stop().fadeIn(300).delay(4000).fadeOut(300);
-  speak(msg);
+  if (doSpeak) speak(msg);
   console.log('playMessage: ' + msg);
 }
 
@@ -182,6 +188,12 @@ function closePause() {
 function triggerSpeak(e) {
   const msg = $(this).data('msg');
   sendMessage('play', msg);
+}
+
+function guide(e) {
+  const msg = $('#guide').val();
+  if (msg) sendMessage('guide', msg);
+  $('#guide').val('');
 }
 
 function speak(msg) {
