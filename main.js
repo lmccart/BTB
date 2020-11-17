@@ -13,7 +13,7 @@ const options = {
   parentNode: document.querySelector('#meet')
 };
 const api = new JitsiMeetExternalAPI(domain, options);
-api.addListener('dominantSpeakerChanged', speakerChange);
+// api.addListener('dominantSpeakerChanged', speakerChange);
 api.addListener('videoConferenceJoined', joined);
 
 // api.executeCommand('muteEveryone');
