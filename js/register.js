@@ -86,7 +86,8 @@ function register(e) {
     for (let i=1; i<num+1; i++) {
       s.participants.push({
         name: $('#p'+num+'name').val(),
-        email: $('#p'+num+'email').val()
+        email: $('#p'+num+'email').val(),
+        pid: makeid()
       })
     };
     if (num >= 4) {
@@ -165,3 +166,16 @@ function msToHms(d) {
   if (h > 0) time = String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
   return time;
 }
+
+
+function makeid() {
+  let result           = new Date().getMilliseconds();
+  let characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  let charactersLength = characters.length;
+  for ( let i = 0; i < 6; i++ ) {
+     result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
+
+
