@@ -2,9 +2,8 @@
 
 body {
   font-family: 'Overpass Mono', helvetica, arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  height: 100vh;
+  margin: 2vh;
+  height: 96vh;
 }
 
 
@@ -26,17 +25,6 @@ iframe {
   padding: 1em;
   text-align: center;
 
-}
-
-#intro {
-  width: 50%;
-  position: absolute;
-  top: 12vh;
-  left: 25%;
-  background: rgba(107, 0, 0, 1);
-  color: white;
-  padding: 1em;
-  display: none;
 }
 
 #overlay {
@@ -91,48 +79,20 @@ iframe {
   display: none;
 }
 
-#controls-secondary {
-  position: absolute;
-  right: 20%;
-  bottom: 1vh;
-  text-align: center;
-  z-index: 2;
-  display: none;
-}
 
-#controls ul, #controls-secondary ul {
+#controls ul {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
 .icon-flower1 {
-  -webkit-mask: url('assets/flower1.svg');
+  -webkit-mask: url('/assets/flower1.svg');
   mask: url('assets/flower1.svg');
 }
 .icon-flower2 { 
-  -webkit-mask: url('assets/flower2.svg');
+  -webkit-mask: url('/assets/flower2.svg');
   mask: url('assets/flower2.svg');
-}
-.icon-flower3 { 
-  -webkit-mask: url('assets/flower3.svg');
-  mask: url('assets/flower3.svg');
-}
-.icon-flower4 { 
-  -webkit-mask: url('assets/flower4.svg');
-  mask: url('assets/flower4.svg');
-}
-.icon-flower5 { 
-  -webkit-mask: url('assets/flower5.svg');
-  mask: url('assets/flower5.svg');
-}
-.icon-flower6 { 
-  -webkit-mask: url('assets/flower6.svg');
-  mask: url('assets/flower6.svg');
-}
-.icon-flower7 { 
-  -webkit-mask: url('assets/flower7.svg');
-  mask: url('assets/flower7.svg');
 }
 
 .icon-holder {
@@ -189,48 +149,6 @@ iframe {
   display: none;
 }
 
-#prompt-response, #pause-response {
-  font-family: 'Overpass Mono', helvetica, arial, sans-serif;
-  font-size: 1em;
-  color: white;
-
-}
-
-#prompt-response {
-  width: 100%;
-  padding: 0;
-  outline: 0;
-  border: 0;
-  border-bottom: 1px dotted white;
-  margin-top: 0.5em;
-  background: none;
-}
-
-#prompt-thankyou {
-  display: none;
-}
-
-#pause-response {
-  width: 50%;
-  padding: 0;
-  outline: 0;
-  border: 0;
-  border-bottom: 1px dotted white;
-  margin-top: 0.5em;
-  background: none;
-}
-
-.x {
-  position: absolute;
-  top: 0.5em;
-  right: 0.7em;
-  cursor: pointer;
-  color: #ABABAB;
-}
-
-.x:hover {
-  color: white;
-}
 
 #guide-holder {
   display: none;
@@ -253,11 +171,27 @@ iframe {
   font-size: 1em;
 }
 
-/* @font-face {
-  font-family: 'Carrie';
-  src: url("assets/VTCCarrie-Regular.eot") format("eot"),
-    url("assets/VTCCarrie-Regular.otf") format("otf"),
-    url("assets/VTCCarrie-Regular.ttf") format("ttf"),
-    url("assets/VTCCarrie-Regular.woff") format("woff"),
-    url("assets/VTCCarrie-Regular.woff2") format("woff2")
-} */
+
+/* REGISTRATION */
+.option {
+  border: 1px solid black;
+  list-style-type: none;
+  margin: 0;
+  display: inline-block;
+  padding: 1vh;
+  cursor: pointer;
+}
+
+.option:hover, .selected-option {
+  background: black;
+  color: white;
+}
+
+input {
+  display: block;
+}
+
+.confirm-piece {
+  display: block;
+  font-weight: bold;
+}

@@ -3,7 +3,7 @@
   <head>
     <meta charset='utf-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <title>HOME | Beyond The Breakdown</title>
+    <title>SESSION | Beyond The Breakdown</title>
 
     <!-- update the version number as needed -->
     <script defer src='/__/firebase/7.18.0/firebase-app.js'></script>
@@ -21,7 +21,31 @@
 
   </head>
   <body>
-    <h1>Beyond the Breakdown</h1>
-    <p>Introductory text</p>
+
+    <div id='meet'></div>
+
+    <div id='guide-holder'>
+      <textarea id='guide'></textarea>
+      <button id='speak-guide'>Speak</button>
+    </div>
+    
+    <div id='overlay'>
+      <span id='timer'>3:09</span>
+    </div>
+
+    <div id='notif-holder'>
+      <div id='notif'>This is a test message?</div>
+    </div>
+
+    <div id='controls'>
+      <ul role='list'>
+        <li role='listitem' id='pause' class='icon-holder'>
+          <span class='icon icon-flower1' aria-label='pause'></span>
+          <span class='icon-label'>Pause</span>
+        </li>
+      </ul>
+    </div>
+
+    <script src='/js/session.js' defer></script>
   </body>
 </html>
