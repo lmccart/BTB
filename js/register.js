@@ -30,7 +30,7 @@ function searchSessions() {
   for (let o in options) {
     let opt = options[o];
     if (opt.participants.length + num <= 6 && !opt.hold) {
-      $('#sessions-options').append('<li class="option" id="'+opt.id+'">'+ opt.datetime.toDate() + '</li>');
+      $('#sessions-options').append('<li class="option" id="'+opt.id+'">'+ opt.datetime + '</li>');
     }
   }
   $('.option').click(selectSession);
@@ -109,8 +109,8 @@ function displayRegistrationConfirmation() {
   } else {
     $('#confirm-people').text('Your group of '+numb+' is confirmed for: ');
   }
-  $('#confirm-date').text(options[selected_option].datetime.toDate());
-  $('#confirm-time').text(options[selected_option].datetime.toDate());
+  $('#confirm-date').text(options[selected_option].datetime);
+  $('#confirm-time').text(options[selected_option].datetime);
   $('#confirm-url').text(options[selected_option].session_url);
   $('#confirm').show();
   releaseSession();

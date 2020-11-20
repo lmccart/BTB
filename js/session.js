@@ -3,14 +3,20 @@ let endTimer = 0;
 let endInterval = false;
 
 // Parse URL params, show HTML elements depending on view
-if (window.location.hash.includes('#guide')) {
+const params = new URLSearchParams(window.location.search);
+let roomId = params.get('roomId');
+if (!roomId) {
+  $('#error').show(); // TODO show error page
+}
+let guide = params.get('guide') ? true : false;
+if (guide) {
   $('#guide-holder').show();
 }
 
 // Create jitsi session
 const domain = 'meet.jit.si';
 const options = {
-  roomName: 'BTB Session 02 (20 August 2020)',
+  roomName: roomId,
   parentNode: document.querySelector('#meet')
 };
 const api = new JitsiMeetExternalAPI(domain, options);
@@ -111,3 +117,4 @@ function msToHms(d) {
   if (h > 0) time = String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
   return time;
 }
+
