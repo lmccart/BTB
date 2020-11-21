@@ -17,7 +17,7 @@ if (guide) {
 const domain = 'meet.jit.si';
 const options = {
   roomName: roomId,
-  parentNode: document.querySelector('#meet')
+  parentNode: document.querySelector('#meet');
 };
 const api = new JitsiMeetExternalAPI(domain, options);
 api.addListener('videoConferenceJoined', joined);
@@ -58,7 +58,7 @@ function joined(e) {
 // subscribed to changes to react.
 function sendMessage(type, val) {
   let m = { type: type, roomId: roomId, val: val, timestamp: new Date().getTime() };
-  db.collection('messages').add(m)
+  db.collection('messages').add(m);
 }
 
 function triggerPause() {
