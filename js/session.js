@@ -36,7 +36,7 @@ let now = new Date().getTime();
 db.collection('messages').where('timestamp', '>', now).onSnapshot({}, function(snapshot) {
   snapshot.docChanges().forEach(function(change) {
     console.log(change);
-    if (change.type === 'added') { // only react to new messages (instead of all old messages in firestore)
+    if (change.roomId === roomId && change.type === 'added') { // only react to new messages (instead of all old messages in firestore)
       let msg = change.doc.data();
       if (msg.type === 'pause') pause(msg.val);
       else if (msg.type === 'guide') playMessage(msg.val, true);
@@ -57,7 +57,7 @@ function joined(e) {
 // This function adds a new message to firestore, triggering all clients
 // subscribed to changes to react.
 function sendMessage(type, val) {
-  let m = { type: type, val: val, timestamp: new Date().getTime() };
+  let m = { type: type, roomId: roomId, val: val, timestamp: new Date().getTime() };
   db.collection('messages').add(m)
 }
 
