@@ -21,13 +21,14 @@
   <body>
     <h1>Cancel</h1>
     <section id='not-found' style='display:none'>
-      Sorry, your session was not found. Please try clicking the link again or write to <a href='mailto:beyondthebreakdown2021@gmail.com'>beyondthebreakdown2021@gmail.com</a> for help.
+      Sorry, your session was not found. It may have already been canceled or the link may have been typed in incorrectly. Please try clicking the link again or write to <a href='mailto:beyondthebreakdown2021@gmail.com'>beyondthebreakdown2021@gmail.com</a> for help.
     </section>
 
     <section id='cancel' style='display:none'>
       <h2>Are you sure you want to cancel?</h2>
+      <p>Your session is currently scheduled for <span id='datetime'></span>.</p>
       <button id='cancel-individual'>Cancel only my spot</button>
-      <button id='cancel-group'>Cancel the reservation for all <span id='cancel-num'></span> group members you registered with?</button>
+      <button id='cancel-group'>Cancel the reservation for your group including: <span id='cancel-people'></span></button>
     </section>
     
     <section id='confirm-individual' style='display:none'>

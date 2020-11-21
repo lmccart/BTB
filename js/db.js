@@ -14,7 +14,7 @@ let times = [
   '2021-01-28T00:14:00 GMT-0700',
 ];
 
-// populateSlots();
+populateSlots();
 function populateSlots() {
   let slots = [];
   for (let i=0; i<times.length; i++) {
@@ -22,7 +22,7 @@ function populateSlots() {
     let s = {
       datetime: times[i],
       hold: false,
-      open: true,
+      closed: false,
       participants: [],
       reminder_sent: false,
       session_url: 'https://beyond-the-breakdown.web.app/session?roomId='+id,
@@ -33,11 +33,12 @@ function populateSlots() {
     db.collection('sessions').doc(s.id).set(s, {merge: true});
   }
   console.log(slots);
+  $('body').append(slots);
 }
 
 
 function makeid(length) {
-  let result           = '';
+  let result           = 'BTB-';
   let characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
   let charactersLength = characters.length;
   for ( let i = 0; i < length; i++ ) {
