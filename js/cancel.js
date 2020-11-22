@@ -16,13 +16,15 @@ function parseParams() {
   id = params.get('roomId');
   pid = params.get('pid');
   if (pid) pid = pid.split(',');
+  console.log(id, pid)
 
   if (!id || !pid || !pid.length) {
     $('#not-found').show();
   } else {
     let docRef = db.collection('sessions').doc(id);
     docRef.get().then(function(doc) {
-      if (doc.exists && doc.participants > 0) {
+      console.log(doc.data().participants)
+      if (doc.exists && doc.data().participants.length > 0) {
         session = doc.data();
         console.log(session);
         $('#cancel').show();

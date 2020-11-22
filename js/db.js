@@ -14,7 +14,7 @@ let times = [
   '2021-01-28T00:14:00 GMT-0700',
 ];
 
-populateSlots();
+// populateSlots();
 function populateSlots() {
   let slots = [];
   for (let i=0; i<times.length; i++) {

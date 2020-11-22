@@ -14,9 +14,7 @@ let db = firebase.firestore(app);
 
 db.collection('sessions').onSnapshot({}, function(snapshot) {
   snapshot.docChanges().forEach(function(change) {
-    console.log(change.doc.data())
     options[change.doc.id] = change.doc.data();
-    console.log(options)
   });
 });
 
@@ -83,17 +81,33 @@ function register(e) {
     
     let s = options[selected_option];
     s.hold = false;
+
+    let group_ids = [];
+    for (let i=0; i<num; i++) {
+      group_ids.push(makeid());
+    }
+
     for (let i=1; i<num+1; i++) {
+
+      let pid = [group_ids[i-1]];
+      for (let j=0; j<num; j++) {
+        if (j !== i-1) {
+          pid.push(group_ids[j]);
+        }
+      }
+      let cancel_url = 'http://beyond-the-breakdown.web.app/cancel/?roomId='+s.id+'&pid='+pid.join(',');
+
       s.participants.push({
-        name: $('#p'+num+'name').val(),
-        email: $('#p'+num+'email').val(),
-        pid: makeid()
-      })
+        name: $('#p'+i+'name').val(),
+        email: $('#p'+i+'email').val(),
+        pid: group_ids[i-1],
+        cancel_url: cancel_url
+      });
     };
     if (num >= 4) {
       s.closed = true;
     }
-    db.collection('sessions').doc(selected_option).set(s, {merge: true});
+    db.collection('sessions').doc(selected_option).set(s);
     displayRegistrationConfirmation();
   } else {
     alert('Please fill out all participant contact info.');
@@ -107,7 +121,7 @@ function displayRegistrationConfirmation() {
   if (num === 1) {
     $('#confirm-people').text('You are confirmed for: ');
   } else {
-    $('#confirm-people').text('Your group of '+numb+' is confirmed for: ');
+    $('#confirm-people').text('Your group of '+num+' is confirmed for: ');
   }
   $('#confirm-date').text(options[selected_option].datetime);
   $('#confirm-time').text(options[selected_option].datetime);
