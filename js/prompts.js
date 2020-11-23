@@ -22,7 +22,8 @@ function addBeginPrompts(){
   newPrompt.style.padding = '50px';
   newPrompt.innerHTML = `
     <button>Begin</button>
-  `
+  `//the button allows the guide to begin the timer/prompts.
+  
   newPrompt.addEventListener('click', (e)=>{
     e.preventDefault();
     options.parentNode.removeChild(newPrompt);
@@ -82,7 +83,7 @@ function startPrompts(){
       var seconds = parseInt(minSec[1]);
       var minutes = parseInt(minSec[0]) * 60;
       var milli = (seconds + minutes) * 1000
-      console.log(milli / 4)
+      console.log(milli / 4)  // this is only temporary for testing
       if(isNaN(milli)){
         return;
       }
