@@ -28,6 +28,22 @@ firebase.auth().signInAnonymously().catch(function(error) { console.log(error); 
 firebase.auth().onAuthStateChanged(function(user) { });
 let db = firebase.firestore(app);
 
+//retrieve tsv
+// fetch('/data/prompts.tsv').then((response)=>{
+//   return response.text()
+// }).then((value)=>{
+//   console.log('tsv available:', !!value)
+//   console.log(value)
+// })
+
+// db.collection('tsv').doc('prompt').get().then((value)=>{
+//   if (!value.exists) {
+//     console.log('34:', 'No such document!');
+//   } else {
+//     console.log('36:', 'Document data:', value.data());
+//   }  
+// })
+
 // Setup listener for firestore changes
 // This is how messages are triggered for all clients/participants. 
 // A button press calls a "trigger" function, and when the messages collection changes
