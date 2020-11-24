@@ -6,14 +6,15 @@ body {
   height: 96vh;
 }
 
-
 iframe {
   width: 100%;
-  height: 100%;
-  position: absolute;
+  height: 500px;
+/*  position: absolute;
   top: 0;
-  left: 0;
+  left: 0;*/
 }
+
+#meet { border: 5px solid #fff; width: 70vw; height: 600px; margin-left: auto; margin-right: auto; display: block; box-shadow: 0 0 50px pink;}
 
 #join {
   width: 30%;
@@ -149,7 +150,6 @@ iframe {
   display: none;
 }
 
-
 #guide-holder {
   display: none;
   position: absolute;
@@ -170,7 +170,6 @@ iframe {
   font-family: 'Overpass Mono', helvetica, arial, sans-serif;
   font-size: 1em;
 }
-
 
 /* REGISTRATION */
 .option {
@@ -195,3 +194,4 @@ input {
   display: block;
   font-weight: bold;
 }
+
