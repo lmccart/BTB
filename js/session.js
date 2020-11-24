@@ -11,13 +11,15 @@ if (!roomId) {
 let guide = params.get('guide') ? true : false;
 if (guide) {
   $('#guide-holder').show();
+} else {
+  $('#participant-holder').show();
 }
 
 // Create jitsi session
 const domain = 'meet.jit.si';
 const options = {
-  roomName: roomId,
-  parentNode: document.querySelector('#meet');
+  roomName: 'BTB Session 02 (20 August 2020)',
+  parentNode: document.querySelector('#meet'),
 };
 const api = new JitsiMeetExternalAPI(domain, options);
 api.addListener('videoConferenceJoined', joined);
@@ -28,6 +30,7 @@ firebase.auth().signInAnonymously().catch(function(error) { console.log(error); 
 firebase.auth().onAuthStateChanged(function(user) { });
 let db = firebase.firestore(app);
 
+
 // Setup listener for firestore changes
 // This is how messages are triggered for all clients/participants. 
 // A button press calls a "trigger" function, and when the messages collection changes
@@ -35,12 +38,35 @@ let db = firebase.firestore(app);
 let now = new Date().getTime();
 db.collection('messages').where('timestamp', '>', now).onSnapshot({}, function(snapshot) {
   snapshot.docChanges().forEach(function(change) {
-    console.log(change);
-    if (change.roomId === roomId && change.type === 'added') { // only react to new messages (instead of all old messages in firestore)
-      let msg = change.doc.data();
-      if (msg.type === 'pause') pause(msg.val);
-      else if (msg.type === 'guide') playMessage(msg.val, true);
+    if(change.type !== 'added'){
+      console.log("not an add");
+      return
     }
+
+    let msg = change.doc.data();
+    if(msg.roomId !== roomId){
+      console.log("wrong room", roomId, msg.roomId)
+      return
+    }
+    
+    console.log(msg);
+    if (msg.type === 'pause') return pause(msg.val);
+    if (msg.type === 'guide') {
+      return playMessage(msg.val, true);
+    }
+    
+    if(msg.type === 'guide-mute'){
+      return playMessage(msg.val, false);
+    }
+
+    if(msg.type === 'uptick'){
+      return uptick(msg)
+    }
+
+    if(msg.type === 'participant-pause'){
+      return particpantPauseMessage();
+    }
+    console.log('badType:', msg.type)
   });
 });
 
@@ -52,6 +78,7 @@ $('#speak-guide').click(triggerGuide);
 function joined(e) {
   userId = e.id;
   $('#controls').show();
+  startPrompts();
 }
 
 // This function adds a new message to firestore, triggering all clients
@@ -62,13 +89,70 @@ function sendMessage(type, val) {
 }
 
 function triggerPause() {
-  sendMessage('pause', 10000); // 10 second pause
+  sendMessage('pause', 30000); // 30 second pause
 }
 
 function triggerGuide(e) {
   const msg = $('#guide').val();
   if (msg) sendMessage('guide', msg);
   $('#guide').val('');
+}
+var participantPaused = false;
+var participantPausedInterval = void 0;
+var participantPausedIntervalCount = 0;
+var pButton = $('#participant-holder button')
+
+pButton.click((e)=>{
+  e.preventDefault()
+  if(participantPaused){
+    return;
+  }
+  sendMessage('participant-pause', 'no email');
+})
+function particpantPauseMessage(){
+
+  if(guide){
+    pausePrompts()
+    pauseButton.prop('disabled', true)
+  }
+  participantPaused = true;
+
+
+    api.executeCommand('toggleAudio')
+    pButton.prop('disabled', true);
+    var newPrompt = $(`
+      <video class="absolute-center" id="pause-vid" style="width:100%" controls autoplay loop>
+        <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+        <source src="https://www.w3schools.com/html/mov_bbb.ogg" type="video/ogg">
+        Your browser does not support HTML video.
+      </video>
+    `);
+    newPrompt.appendTo(options.parentNode)
+    var countDown = $(`
+      <p id='count-down'>30</p>
+    `);
+    countDown.appendTo($('#participant-holder'));
+
+    participantPausedInterval = setInterval(()=>{
+      var nextInt = parseInt(countDown.text()) - 1;
+      if(nextInt === 0){
+        console.log("video-ended");
+        participantPausedIntervalCount = 0
+        clearInterval(participantPausedInterval);
+
+        api.executeCommand('toggleAudio')
+        pButton.prop('disabled', false)
+        $('#participant-holder #count-down').remove()
+        $('#pause-vid').remove()
+        participantPaused = false
+        if(guide){
+          pausePrompts()
+          pauseButton.prop('disabled', false)
+        }
+
+      }
+      countDown.text(nextInt);
+    }, 1000)
 }
 
 // Enacts a pause moment, user is muted and ocean scene displayed.
@@ -117,4 +201,3 @@ function msToHms(d) {
   if (h > 0) time = String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
   return time;
 }
-
