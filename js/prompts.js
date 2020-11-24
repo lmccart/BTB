@@ -1,62 +1,35 @@
+
 var TSV_ROWS_AS_JSON;
 
-function createPromptElement(){
-  var newPrompt = document.createElement("div");
-  newPrompt.id = 'tsv-prompt';
-  newPrompt.style.position = 'absolute';
-  newPrompt.style.top = '50%';
-  newPrompt.style.left = '50%';
-  newPrompt.style.transform = 'translate(-50%, -50%)';
-  newPrompt.style.backgroundColor = 'rgba(255,255,255,0.75)';
-  return newPrompt;
-}
+$.ajax({
+  url: '/data/prompts.tsv',
+})
+.done(function( data ) {
+	console.log(data);
+  console.log('tsv available:', !!data)
+  convertTsvIntoObjects(data)
+});
 
-function addBeginPrompts(){
-  options.parentNode.style.position = 'static';
-  options.parentNode.style.height = '100%'
-  
-  if(!guide){
-    return;
-  }
-  var newPrompt = createPromptElement();
-  newPrompt.style.padding = '50px';
-  newPrompt.innerHTML = `
-    <button>Begin</button>
-  `//the button allows the guide to begin the timer/prompts.
-  
-  newPrompt.addEventListener('click', (e)=>{
-    e.preventDefault();
-    options.parentNode.removeChild(newPrompt);
-    startPrompts();
+function convertTsvIntoObjects(tsvText){
+  var tsvRows = tsvText.split('\n');
+  var headers = tsvRows.shift();
+  headers = headers.split('\t');
+  console.log(headers)
+  TSV_ROWS_AS_JSON = tsvRows.map((row)=>{
+    var cols = row.split('\t');
+    var value = {};
+    headers.forEach((header, index)=>{
+      value[header] = cols[index]
+    })
+    return value;
+  }).filter((value)=>{
+  	value.offsetMilli = offsetToMilli(value.Offset)
+  	if(isNaN(value.offsetMilli)){
+  		console.log(value, isNaN(value.offsetMilli));
+  		return false;
+  	}
+  	return true;
   })
-  options.parentNode.appendChild(newPrompt);
-}
-
-function displayRow(row){
-  console.log(row);
-  // remove previous
-  var oldPrompt = options.parentNode.querySelector('#tsv-prompt');
-  if(oldPrompt){
-    options.parentNode.removeChild(oldPrompt);
-  }
-  var newPrompt = createPromptElement();
-
-  Object.keys(row).map((key)=>{
-  	console.log(key, ":", row[key]);
-  })
-  newPrompt.innerHTML = `
-    <p>${row['Possible Prompt 0']}</p>
-    <p>${row['Possible Prompt 1']}</p>
-  `;
-
-  newPrompt.addEventListener('click', (e)=>{
-    e.preventDefault();
-    var oldPrompt = options.parentNode.querySelector('#tsv-prompt');
-    if(oldPrompt){
-      options.parentNode.removeChild(oldPrompt);
-    }
-  })
-  options.parentNode.appendChild(newPrompt);
 }
 
 function loopUntilReady(varName, maxTime, currentTime){
@@ -75,90 +48,94 @@ function loopUntilReady(varName, maxTime, currentTime){
   })
 }
 
-function startPrompts(){
-  loopUntilReady('TSV_ROWS_AS_JSON', 5 * 1000).then(()=>{
-    TSV_ROWS_AS_JSON.map((row)=>{
-      var offset = row.Offset;
+var pauseButton = $('#pause-prompts');
+var skipButton = $('#skip-prompt');
+var TIME_INTERVAL = 10;
+var time = 0;
+var interval = void 0;
+var lastPlayed = -1;
+
+pauseButton.click((e)=>{
+	e.preventDefault()
+	if(participantPaused){
+		return
+	}
+	if(interval){
+		pausePrompts();
+	} else {
+		resumePrompts();
+	}
+})
+
+skipButton.click((e)=>{
+	e.preventDefault();
+	console.log('skip', lastPlayed);
+	lastPlayed += 1;
+	time = TSV_ROWS_AS_JSON[lastPlayed].offsetMilli;
+})
+
+function resumePrompts(){
+		runPrompts((row)=>{
+			sendMessage('guide-mute', row['Possible Prompt 0']);
+		});
+		pauseButton.text('Pause Prompts');
+}
+
+function eraseCounter(){
+  $("#content").remove();
+}
+function displayCounter(prompt, timeleft){
+  var minutes = Math.floor(timeleft/60);
+  var seconds = timeleft%60;
+  if(seconds.toString().length == 1){
+    seconds = "0" + seconds.toString();
+  }
+
+  $('#content').html(`
+    <p>
+      <span>NEXT PROMPT IN: </span><span>${minutes}:${seconds}</span>
+    </p>
+    <p>${prompt}</p>
+  `)
+}
+
+function runPrompts(handleRow){
+	interval = setInterval(()=>{
+	    if(time%1000 === 0){
+	      if(TSV_ROWS_AS_JSON.length === lastPlayed){
+	        eraseCounter()
+	      }else{
+	        displayCounter(
+	          TSV_ROWS_AS_JSON[lastPlayed + 1]['Possible Prompt 0'],
+	          TSV_ROWS_AS_JSON[lastPlayed+1].offsetMilli/1000 - time/1000
+	        )
+	      }
+	    }
+		var nextSoonest;
+		TSV_ROWS_AS_JSON.filter((item, index)=>{
+			if(index <= lastPlayed) return console.log();
+			var offset = item.offsetMilli
+			if(offset <= time){
+				lastPlayed = index;
+				handleRow(item)
+			} else {
+				if(time - offset < nextSoonest);
+			}
+		})
+	    time += TIME_INTERVAL
+	}, TIME_INTERVAL);
+}
+
+function pausePrompts(){
+	clearInterval(interval);
+	interval = void 0;
+	pauseButton.text('Resume Prompts')
+}
+
+function offsetToMilli(offset){
       var minSec = offset.split(':');
       var seconds = parseInt(minSec[1]);
       var minutes = parseInt(minSec[0]) * 60;
       var milli = (seconds + minutes) * 1000
-      console.log(milli / 4)  // this is only temporary for testing
-      if(isNaN(milli)){
-        return;
-      }
-      setTimeout(()=>{
-        displayRow(row)
-      }, milli / 4);
-    })
-  })
+      return milli
 }
-
-// Use this to retrieve prompts.tsv
-fetch('/data/prompts.tsv').then((response)=>{
-  return response.text()
-}).then((tsvText)=>{
-  console.log('tsv available:', !!tsvText)
-//  console.log(tsvText)
-  var tsvRows = tsvText.split('\n');
-  var headers = tsvRows.shift();
-  headers = headers.split('\t');
-  console.log(headers)
-  TSV_ROWS_AS_JSON = tsvRows.map((row)=>{
-    var cols = row.split('\t');
-    var value = {};
-    headers.forEach((header, index)=>{
-      value[header] = cols[index]
-    })
-    return value;
-  })
-  addBeginPrompts();
-//  startPrompts(tsvRowsAsJSON);
-
-})
-
-
-
-/*
-
-- Guide can write new prompts on demand
-- load prompts from tsv file and display it for each given time
-- pause on certian prompts is the guide wants
-
-Guide can
-- Send messages to all other participants
-	- can this be done with jitsi - maybe
-		- api.executeCommand(command, ...arguments);
-			- endpointTextMessageReceived
-				- if we know the guide's id
-					- on recieved 
-						- ifsender id is guide's id
-						- display as prompt
-
-				```
-				{
-				    senderInfo: {
-			        	jid: string, // the jid of the sender
-        				id: string // the participant id of the sender
-			    	},
-				    eventData: {
-				        name: string // the name of the datachannel event: `endpoint-text-message`
-    				    text: string // the received text from the sender
-				    }
-				}
-				```
-			- incomingMessage
-				- if we know the id of the sender and the guide's id
-					- can display the prompt
-				```
-				{
-				    from: string, // The id of the user that sent the message
-				    nick: string, // the nickname of the user that sent the message
-				    message: string // the text of the message
-				}
-
-				```
-
-
-
-*/
