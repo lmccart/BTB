@@ -1,9 +1,9 @@
 Offset	Automated?	Possible Prompt 0	Possible Prompt 1	Possible Prompt 2
 0:10	Y	Hello.	 	
-0:11	Y	I am Serenity.	 	 
-0:13	Y	Your facilitator for today’s world-building session.	 	
-0:15	Y	Feel free to use the chat function to type in answers you may not feel comfortable articulating verbally.	 	
-0:20	N	Open time for intros	 	
+0:15	Y	I am Serenity.	 	 
+0:25	Y	Your facilitator for today’s world-building session.	 	
+0:35	Y	Feel free to use the chat function to type in answers you may not feel comfortable articulating verbally.	 	
+0:50	N	Open time for intros	 	
 1:00	Y	Welcome to the year 2050.	 	
 1:10	Y	We’d like to ask you to introduce yourselves. Who are you and why are you here?	 	
 1:20	Y	This world is a protopia — not a dystopia. We are living here together in an aspirational future.	 	

@@ -2,6 +2,7 @@ let db, api;
 let userId;
 let pauseTimer = 0;
 let pauseInterval = false;
+let ytPlayer;
 
 /* GUIDE VARS */
 let prompts = [];
@@ -52,7 +53,21 @@ function initSession() {
     });
   });
 
+  var tag = document.createElement('script');
+  tag.id = 'iframe-demo';
+  tag.src = 'https://www.youtube.com/iframe_api';
+  var firstScriptTag = document.getElementsByTagName('script')[0];
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+  
   $('#pause-group').click(triggerPauseGroup);
+}
+
+function onYouTubeIframeAPIReady() {
+  console.log('API READY!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+  ytPlayer = new YT.Player('ytPlayer', {
+    videoId: 't0NHILIwO2I',
+    playerVars: { 'autoplay': 0, 'controls': 0, 'rel' : 0,  'fs' : 0, 'modestbranding': 1  }
+  });
 }
 
 
@@ -88,12 +103,14 @@ function pauseGroup(ms) {
   pauseTimer = performance.now() + ms;
   $('#pause-timer').text(msToHms(ms));
   $('#overlay').fadeIn(0).delay(ms).fadeOut(0);
+  ytPlayer.playVideo();
   api.isAudioMuted().then(muted => {
     if (!muted) api.executeCommand('toggleAudio');
   });
   setTimeout(function() {
     api.executeCommand('toggleAudio');
-    if (guide) resumePrompt();
+    ytPlayer.stopVideo();
+    if (guide && currentPrompt > -1) resumePrompt();
   }, ms);
   pauseInterval = setInterval(function() { 
     const remaining = pauseTimer - performance.now();
@@ -174,7 +191,7 @@ function checkPrompt() {
     triggerPrompt();
     nextPrompt();
   } else {
-    $('#next-timer').text('Next prompt in '+msToHms(remaining)+':');
+    $('#next-timer').text('Next prompt in '+msToHms(remaining));
   }
 }
 
@@ -220,3 +237,4 @@ function offsetToMs(offset) {
   const minSec = offset.split(':');
   return 1000 * (parseInt(minSec[1]) + parseInt(minSec[0]) * 60);
 }
+
