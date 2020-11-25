@@ -24,13 +24,14 @@
     <div id='meet'></div>
 
     <div id='guide-controls'>
-      <div id='next'>
-        <div>Next prompt in: <span id='next-timer'></span></div>
+      <div id='next' style='display:none'>
+        <div id='next-timer'></div>
         <div id='next-prompt'></div>
       </div>
-      <button id='pause-prompt'>Pause Prompts</button>
-      <button id='resume-prompt'>Resume Prompts</button>
-      <button id='skip-prompt'>Skip Prompt</button>
+      <button id='start-prompt'>Start Prompts</button>
+      <button id='pause-prompt' style='display:none'>Pause Prompts</button>
+      <button id='resume-prompt' style='display:none'>Resume Prompts</button>
+      <button id='skip-prompt' style='display:none'>Skip Prompt</button>
 
 
       <textarea id='prompt-text'></textarea>
@@ -38,12 +39,16 @@
     </div>
 
     <div id='participant-holder'>
-      <button>Ocean Pause</button>
+      <button id='pause-group'>Group Pause</button>
     </div>
     
     <div id='notif-controls'>
       <div id='notif'></div>
-    </div>    
+    </div>
+
+    <div id='overlay'>
+      <div id='pause-timer'></div>
+    </div>
 
     <script src='/js/session.js' defer></script>
     <script src='/js/prompts.js' defer></script>

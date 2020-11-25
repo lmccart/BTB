@@ -1,4 +1,4 @@
-let db;
+let db, api;
 let userId;
 let pauseTimer = 0;
 let pauseInterval = false;
@@ -25,13 +25,13 @@ initSession();
 
 function initSession() {
   // Create jitsi session
-  // const domain = 'meet.jit.si';
-  // const options = {
-  //   roomName: roomId,
-  //   parentNode: document.querySelector('#meet'),
-  // };
-  // const api = new JitsiMeetExternalAPI(domain, options);
-  // api.addListener('videoConferenceJoined', joined);
+  const domain = 'meet.jit.si';
+  const options = {
+    roomName: roomId,
+    parentNode: document.querySelector('#meet'),
+  };
+  api = new JitsiMeetExternalAPI(domain, options);
+  api.addListener('videoConferenceJoined', joined);
 
   // Setup firebase app
   let app = firebase.app();
@@ -46,13 +46,13 @@ function initSession() {
       let msg = change.doc.data();
       if(change.type !== 'added') return;
       else if(msg.roomId !== roomId) return;
-      else if (msg.type === 'pause') pause(msg.val);
+      else if (msg.type === 'pauseGroup') pauseGroup(msg.val);
       else if (msg.type === 'guide') playMessage(msg.val, true);
       else console.log('badType:', msg.type)
     });
   });
 
-  $('#pause').click(triggerPause);
+  $('#pause-group').click(triggerPauseGroup);
 }
 
 
@@ -68,8 +68,9 @@ function sendMessage(type, val) {
   db.collection('messages').add(m);
 }
 
-function triggerPause() {
-  sendMessage('pause', 30000); // 30 second pause
+function triggerPauseGroup() {
+  if (guide) pausePrompt();
+  sendMessage('pause', 10000); // 10 second pause
 }
 
 function triggerTextPrompt(e) {
@@ -82,20 +83,21 @@ function triggerPrompt() {
   sendMessage('guide', prompts[currentPrompt].options[currentOption]);
 }
 
-function pause(ms) {
+function pauseGroup(ms) {
   if (pauseInterval) clearInterval(pauseInterval);
   pauseTimer = performance.now() + ms;
-  $('#timer').text(msToHms(ms));
+  $('#pause-timer').text(msToHms(ms));
   $('#overlay').fadeIn(0).delay(ms).fadeOut(0);
   api.isAudioMuted().then(muted => {
     if (!muted) api.executeCommand('toggleAudio');
   });
   setTimeout(function() {
     api.executeCommand('toggleAudio');
+    if (guide) resumePrompt();
   }, ms);
   pauseInterval = setInterval(function() { 
     const remaining = pauseTimer - performance.now();
-    $('#timer').text(msToHms(remaining));
+    $('#pause-timer').text(msToHms(remaining));
   });
 }
 
@@ -113,64 +115,30 @@ function speak(msg) {
   window.speechSynthesis.speak(utter);
 }
 
-// Helper function for formatting text in hh:mm format.
-function msToHms(d) {
-  d = Number(d) / 1000;
-  let h = Math.floor(d / 3600);
-  let m = Math.floor(d % 3600 / 60);
-  let s = Math.floor(d % 3600 % 60);
-
-  let time =  String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
-  if (h > 0) time = String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
-  return time;
-}
-
-function offsetToMs(offset) {
-  const minSec = offset.split(':');
-  return 1000 * (parseInt(minSec[1]) + parseInt(minSec[0]) * 60);
-}
 
 /* GUIDE */
-
 function initGuide() {
-  $('#guide-controls').show();
-  $('#trigger-prompt').click(triggerTextPrompt);
-  $('#skip-prompt').click(nextPrompt);
-  $('#pause-prompt').click(pausePrompt);
-  $('#resume-prompt').click(resumePrompt);
-
-  // load prompts
   $.ajax('/data/prompts.tsv')
   .done(data => {
     console.log('loaded prompts from TSV');
     convertTsvIntoObjects(data);
-    nextPrompt();
+
+    $('#guide-controls').show();
+    $('#trigger-prompt').click(triggerTextPrompt);
+    $('#start-prompt').click(startPrompt);
+    $('#skip-prompt').click(nextPrompt);
+    $('#pause-prompt').click(pausePrompt);
+    $('#resume-prompt').click(resumePrompt);
+
   });  
 }
 
-function convertTsvIntoObjects(tsvText){
-  let tsvRows = tsvText.split('\n');
-  let headers = tsvRows.shift();
-  headers = headers.split('\t');
-
-  let lastOffset = 0;
-  for (let row of tsvRows) {
-    let cols = row.split('\t');
-    if (cols[1].toUpperCase().includes('Y')) {
-      let offset = offsetToMs(cols[0]);
-      let p = {
-        offset: offset,
-        lastOffset: offset - lastOffset,
-        options: []
-      };
-      for (let i=2; i<cols.length; i++) {
-        if (cols[i].length > 2) p.options.push(cols[i]);
-      }
-      lastOffset = offset;
-      prompts.push(p);
-    }
-  }
-  console.log(prompts);
+function startPrompt() {
+  $('#start-prompt').hide();
+  $('#next').show();
+  $('#pause-prompt').show();
+  $('#skip-prompt').show();
+  nextPrompt();
 }
 
 function nextPrompt() {
@@ -197,7 +165,7 @@ function pausePrompt() {
   promptTimer -= performance.now();
   $('#pause-prompt').hide();
   $('#resume-prompt').show();
-  $('#next-timer').text('PAUSED');
+  $('#next-timer').text('Next prompt PAUSED');
 }
 
 function checkPrompt() {
@@ -206,8 +174,49 @@ function checkPrompt() {
     triggerPrompt();
     nextPrompt();
   } else {
-    $('#next-timer').text(msToHms(remaining));
+    $('#next-timer').text('Next prompt in '+msToHms(remaining)+':');
   }
 }
 
 
+function convertTsvIntoObjects(tsvText){
+  let tsvRows = tsvText.split('\n');
+  let headers = tsvRows.shift();
+  headers = headers.split('\t');
+
+  let lastOffset = 0;
+  for (let row of tsvRows) {
+    let cols = row.split('\t');
+    if (cols[1].toUpperCase().includes('Y')) {
+      let offset = offsetToMs(cols[0]);
+      let p = {
+        offset: offset,
+        lastOffset: offset - lastOffset,
+        options: []
+      };
+      for (let i=2; i<cols.length; i++) {
+        if (cols[i].length > 2) p.options.push(cols[i]);
+      }
+      lastOffset = offset;
+      prompts.push(p);
+    }
+  }
+  console.log(prompts);
+}
+
+// Helper function for formatting text in hh:mm format.
+function msToHms(d) {
+  d = Number(d) / 1000;
+  let h = Math.floor(d / 3600);
+  let m = Math.floor(d % 3600 / 60);
+  let s = Math.floor(d % 3600 % 60);
+
+  let time =  String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+  if (h > 0) time = String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+  return time;
+}
+
+function offsetToMs(offset) {
+  const minSec = offset.split(':');
+  return 1000 * (parseInt(minSec[1]) + parseInt(minSec[0]) * 60);
+}
