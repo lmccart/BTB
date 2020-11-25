@@ -17,38 +17,35 @@
     <script src='https://code.jquery.com/jquery-3.5.1.min.js' integrity='sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=' crossorigin='anonymous'></script>
     <link href="https://fonts.googleapis.com/css2?family=Overpass+Mono&display=swap" rel="stylesheet">
     <link rel='stylesheet' href='/css/style.css'>
-    <link rel='stylesheet' href='/css/prompts.css'>
 
   </head>
   <body>
 
     <div id='meet'></div>
 
-    <div id='guide-holder'>
-      <textarea id='guide'></textarea>
-      <div id="content"></div>
-      <button id='speak-guide'>Speak</button>
-      <button id='pause-prompts'>Start Prompts</button>
-      <button id='skip-prompt'>Skip Current Prompt</button>
+    <div id='guide-controls'>
+      <div id='next'>
+        <div>Next prompt in: <span id='next-timer'></span></div>
+        <div id='next-prompt'></div>
+      </div>
+      <button id='pause-prompt'>Pause Prompts</button>
+      <button id='resume-prompt'>Resume Prompts</button>
+      <button id='skip-prompt'>Skip Prompt</button>
+
+
+      <textarea id='prompt-text'></textarea>
+      <button id='trigger-prompt'>Speak</button>
     </div>
 
     <div id='participant-holder'>
       <button>Ocean Pause</button>
     </div>
     
-    <div id='notif-holder'>
+    <div id='notif-controls'>
       <div id='notif'></div>
-    </div>
-    <div id='controls'>
-      <ul role='list'>
-        <li role='listitem' id='pause' class='icon-holder'>
-<!--           <span class='icon icon-flower1' aria-label='pause'></span> -->
-          <span class='icon-label'>Pause</span>
-        </li>
-      </ul>
-    </div>
+    </div>    
 
-<script src='/js/session.js' defer></script>
-<script src='/js/prompts.js' defer></script>
+    <script src='/js/session.js' defer></script>
+    <script src='/js/prompts.js' defer></script>
   </body>
 </html>

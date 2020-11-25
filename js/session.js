@@ -1,6 +1,15 @@
+let db;
 let userId;
-let endTimer = 0;
-let endInterval = false;
+let pauseTimer = 0;
+let pauseInterval = false;
+
+/* GUIDE VARS */
+let prompts = [];
+let currentPrompt = -1;
+let currentOption = 0;
+let promptInterval = false;
+let promptTimer = 0;
+
 
 // Parse URL params, show HTML elements depending on view
 const params = new URLSearchParams(window.location.search);
@@ -9,80 +18,51 @@ if (!roomId) {
   $('#error').show(); // TODO show error page
 }
 let guide = params.get('guide') ? true : false;
-if (guide) {
-  $('#guide-holder').show();
-} else {
-  $('#participant-holder').show();
+if (guide) initGuide();
+
+initSession();
+
+
+function initSession() {
+  // Create jitsi session
+  // const domain = 'meet.jit.si';
+  // const options = {
+  //   roomName: roomId,
+  //   parentNode: document.querySelector('#meet'),
+  // };
+  // const api = new JitsiMeetExternalAPI(domain, options);
+  // api.addListener('videoConferenceJoined', joined);
+
+  // Setup firebase app
+  let app = firebase.app();
+  firebase.auth().signInAnonymously().catch(function(error) { console.log(error); });
+  firebase.auth().onAuthStateChanged(function(user) { });
+  db = firebase.firestore(app);
+
+  // Setup listener for firestore changes
+  let now = new Date().getTime();
+  db.collection('messages').where('timestamp', '>', now).onSnapshot({}, function(snapshot) {
+    snapshot.docChanges().forEach(function(change) {
+      let msg = change.doc.data();
+      if(change.type !== 'added') return;
+      else if(msg.roomId !== roomId) return;
+      else if (msg.type === 'pause') pause(msg.val);
+      else if (msg.type === 'guide') playMessage(msg.val, true);
+      else console.log('badType:', msg.type)
+    });
+  });
+
+  $('#pause').click(triggerPause);
 }
 
-// Create jitsi session
-const domain = 'meet.jit.si';
-const options = {
-  roomName: 'BTB Session 02 (20 August 2020)',
-  parentNode: document.querySelector('#meet'),
-};
-const api = new JitsiMeetExternalAPI(domain, options);
-api.addListener('videoConferenceJoined', joined);
-
-// Setup firebase app
-let app = firebase.app();
-firebase.auth().signInAnonymously().catch(function(error) { console.log(error); });
-firebase.auth().onAuthStateChanged(function(user) { });
-let db = firebase.firestore(app);
-
-
-// Setup listener for firestore changes
-// This is how messages are triggered for all clients/participants. 
-// A button press calls a "trigger" function, and when the messages collection changes
-// each client is notified and handles the new message accordingly.
-let now = new Date().getTime();
-db.collection('messages').where('timestamp', '>', now).onSnapshot({}, function(snapshot) {
-  snapshot.docChanges().forEach(function(change) {
-    if(change.type !== 'added'){
-      console.log("not an add");
-      return
-    }
-
-    let msg = change.doc.data();
-    if(msg.roomId !== roomId){
-      console.log("wrong room", roomId, msg.roomId)
-      return
-    }
-    
-    console.log(msg);
-    if (msg.type === 'pause') return pause(msg.val);
-    if (msg.type === 'guide') {
-      return playMessage(msg.val, true);
-    }
-    
-    if(msg.type === 'guide-mute'){
-      return playMessage(msg.val, false);
-    }
-
-    if(msg.type === 'uptick'){
-      return uptick(msg)
-    }
-
-    if(msg.type === 'participant-pause'){
-      return particpantPauseMessage();
-    }
-    console.log('badType:', msg.type)
-  });
-});
-
-// DOM button event listeners
-$('#pause').click(triggerPause);
-$('#speak-guide').click(triggerGuide);
 
 // Called when participant joins.
 function joined(e) {
   userId = e.id;
-  $('#controls').show();
-  startPrompts();
+  $('#participant-controls').show();
 }
 
-// This function adds a new message to firestore, triggering all clients
-// subscribed to changes to react.
+
 function sendMessage(type, val) {
   let m = { type: type, roomId: roomId, val: val, timestamp: new Date().getTime() };
   db.collection('messages').add(m);
@@ -92,74 +72,19 @@ function triggerPause() {
   sendMessage('pause', 30000); // 30 second pause
 }
 
-function triggerGuide(e) {
-  const msg = $('#guide').val();
+function triggerTextPrompt(e) {
+  const msg = $('#prompt-text').val();
   if (msg) sendMessage('guide', msg);
-  $('#guide').val('');
-}
-var participantPaused = false;
-var participantPausedInterval = void 0;
-var participantPausedIntervalCount = 0;
-var pButton = $('#participant-holder button')
-
-pButton.click((e)=>{
-  e.preventDefault()
-  if(participantPaused){
-    return;
-  }
-  sendMessage('participant-pause', 'no email');
-})
-function particpantPauseMessage(){
-
-  if(guide){
-    pausePrompts()
-    pauseButton.prop('disabled', true)
-  }
-  participantPaused = true;
-
-
-    api.executeCommand('toggleAudio')
-    pButton.prop('disabled', true);
-    var newPrompt = $(`
-      <video class="absolute-center" id="pause-vid" style="width:100%" controls autoplay loop>
-        <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
-        <source src="https://www.w3schools.com/html/mov_bbb.ogg" type="video/ogg">
-        Your browser does not support HTML video.
-      </video>
-    `);
-    newPrompt.appendTo(options.parentNode)
-    var countDown = $(`
-      <p id='count-down'>30</p>
-    `);
-    countDown.appendTo($('#participant-holder'));
-
-    participantPausedInterval = setInterval(()=>{
-      var nextInt = parseInt(countDown.text()) - 1;
-      if(nextInt === 0){
-        console.log("video-ended");
-        participantPausedIntervalCount = 0
-        clearInterval(participantPausedInterval);
-
-        api.executeCommand('toggleAudio')
-        pButton.prop('disabled', false)
-        $('#participant-holder #count-down').remove()
-        $('#pause-vid').remove()
-        participantPaused = false
-        if(guide){
-          pausePrompts()
-          pauseButton.prop('disabled', false)
-        }
-
-      }
-      countDown.text(nextInt);
-    }, 1000)
+  $('#prompt-text').val('');
 }
 
-// Enacts a pause moment, user is muted and ocean scene displayed.
-// After pause ends, user is unmuted.
+function triggerPrompt() {
+  sendMessage('guide', prompts[currentPrompt].options[currentOption]);
+}
+
 function pause(ms) {
-  if (endInterval) clearInterval(endInterval);
-  endTimer = performance.now() + ms;
+  if (pauseInterval) clearInterval(pauseInterval);
+  pauseTimer = performance.now() + ms;
   $('#timer').text(msToHms(ms));
   $('#overlay').fadeIn(0).delay(ms).fadeOut(0);
   api.isAudioMuted().then(muted => {
@@ -168,14 +93,12 @@ function pause(ms) {
   setTimeout(function() {
     api.executeCommand('toggleAudio');
   }, ms);
-  endInterval = setInterval(function() { 
-    const remaining = endTimer - performance.now();
+  pauseInterval = setInterval(function() { 
+    const remaining = pauseTimer - performance.now();
     $('#timer').text(msToHms(remaining));
   });
 }
 
-// Plays a message with overlaid text.
-// If doSpeak is true, it also speaks it
 function playMessage(msg, doSpeak) {
   $('#notif').text(msg);
   $('#notif-holder').stop().fadeIn(300).delay(4000).fadeOut(300);
@@ -201,3 +124,90 @@ function msToHms(d) {
   if (h > 0) time = String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
   return time;
 }
+
+function offsetToMs(offset) {
+  const minSec = offset.split(':');
+  return 1000 * (parseInt(minSec[1]) + parseInt(minSec[0]) * 60);
+}
+
+/* GUIDE */
+
+function initGuide() {
+  $('#guide-controls').show();
+  $('#trigger-prompt').click(triggerTextPrompt);
+  $('#skip-prompt').click(nextPrompt);
+  $('#pause-prompt').click(pausePrompt);
+  $('#resume-prompt').click(resumePrompt);
+
+  // load prompts
+  $.ajax('/data/prompts.tsv')
+  .done(data => {
+    console.log('loaded prompts from TSV');
+    convertTsvIntoObjects(data);
+    nextPrompt();
+  });  
+}
+
+function convertTsvIntoObjects(tsvText){
+  let tsvRows = tsvText.split('\n');
+  let headers = tsvRows.shift();
+  headers = headers.split('\t');
+
+  let lastOffset = 0;
+  for (let row of tsvRows) {
+    let cols = row.split('\t');
+    if (cols[1].toUpperCase().includes('Y')) {
+      let offset = offsetToMs(cols[0]);
+      let p = {
+        offset: offset,
+        lastOffset: offset - lastOffset,
+        options: []
+      };
+      for (let i=2; i<cols.length; i++) {
+        if (cols[i].length > 2) p.options.push(cols[i]);
+      }
+      lastOffset = offset;
+      prompts.push(p);
+    }
+  }
+  console.log(prompts);
+}
+
+function nextPrompt() {
+  if (promptInterval) clearInterval(promptInterval);
+  currentPrompt++;
+  if (currentPrompt <= prompts.length) {
+    promptInterval = setInterval(checkPrompt, 100);
+    promptTimer = prompts[currentPrompt].lastOffset + performance.now();
+    let options = prompts[currentPrompt].options;
+    currentOption = Math.floor(Math.random() * options.length);
+    $('#next-prompt').text(options[currentOption]);
+  }
+}
+
+function resumePrompt(){
+  promptTimer += performance.now();
+  promptInterval = setInterval(checkPrompt, 100);
+  $('#resume-prompt').hide();
+  $('#pause-prompt').show();
+}
+
+function pausePrompt() {
+  if (promptInterval) clearInterval(promptInterval);
+  promptTimer -= performance.now();
+  $('#pause-prompt').hide();
+  $('#resume-prompt').show();
+  $('#next-timer').text('PAUSED');
+}
+
+function checkPrompt() {
+  const remaining = promptTimer - performance.now();
+  if (remaining <= 0) {
+    triggerPrompt();
+    nextPrompt();
+  } else {
+    $('#next-timer').text(msToHms(remaining));
+  }
+}
+
+
