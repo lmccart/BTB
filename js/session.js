@@ -70,7 +70,7 @@ function sendMessage(type, val) {
 
 function triggerPauseGroup() {
   if (guide) pausePrompt();
-  sendMessage('pause', 10000); // 10 second pause
+  sendMessage('pauseGroup', 10000); // 10 second pause
 }
 
 function triggerTextPrompt(e) {

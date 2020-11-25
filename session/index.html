@@ -24,21 +24,23 @@
     <div id='meet'></div>
 
     <div id='guide-controls'>
+      <button id='start-prompt' class='guide-button'>Start Prompts</button>
       <div id='next' style='display:none'>
         <div id='next-timer'></div>
         <div id='next-prompt'></div>
+
+        <button id='pause-prompt' class='guide-button' style='display:none'>Pause Prompts</button>
+        <button id='resume-prompt' class='guide-button' style='display:none'>Resume Prompts</button>
+        <button id='skip-prompt' class='guide-button' style='display:none'>Skip Prompt</button>
       </div>
-      <button id='start-prompt'>Start Prompts</button>
-      <button id='pause-prompt' style='display:none'>Pause Prompts</button>
-      <button id='resume-prompt' style='display:none'>Resume Prompts</button>
-      <button id='skip-prompt' style='display:none'>Skip Prompt</button>
 
-
-      <textarea id='prompt-text'></textarea>
-      <button id='trigger-prompt'>Speak</button>
+      <div id='text'>
+        <textarea id='prompt-text'></textarea>
+        <button id='trigger-prompt'>Speak</button>
+      </div>
     </div>
 
-    <div id='participant-holder'>
+    <div id='participant-controls' style='display:none'>
       <button id='pause-group'>Group Pause</button>
     </div>
     
