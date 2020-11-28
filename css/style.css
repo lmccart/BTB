@@ -100,11 +100,20 @@ body {
   color: pink;
 }
 
-#prompt-text {
+textarea {
   width: 96%;
   padding: 2%;
   outline: none;
   border: 1px solid black;
+}
+
+label {
+  display: block;
+}
+
+#form {
+  margin-top: 2em;
+  /* display: none; */
 }
 
 /* REGISTRATION */

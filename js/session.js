@@ -63,7 +63,6 @@ function initSession() {
 }
 
 function onYouTubeIframeAPIReady() {
-  console.log('API READY!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
   ytPlayer = new YT.Player('ytPlayer', {
     videoId: 't0NHILIwO2I',
     playerVars: { 'autoplay': 0, 'controls': 0, 'rel' : 0,  'fs' : 0, 'modestbranding': 1  }
@@ -146,6 +145,7 @@ function initGuide() {
     $('#skip-prompt').click(nextPrompt);
     $('#pause-prompt').click(pausePrompt);
     $('#resume-prompt').click(resumePrompt);
+    $('#world-submit').click(submitWorld);
 
   });  
 }
@@ -161,12 +161,15 @@ function startPrompt() {
 function nextPrompt() {
   if (promptInterval) clearInterval(promptInterval);
   currentPrompt++;
-  if (currentPrompt <= prompts.length) {
+  if (currentPrompt < prompts.length) {
     promptInterval = setInterval(checkPrompt, 100);
     promptTimer = prompts[currentPrompt].lastOffset + performance.now();
     let options = prompts[currentPrompt].options;
     currentOption = Math.floor(Math.random() * options.length);
     $('#next-prompt').text(options[currentOption]);
+  } else {
+    $('#next').hide();
+    $('#form').show();
   }
 }
 
@@ -195,6 +198,21 @@ function checkPrompt() {
   }
 }
 
+function submitWorld() {
+  let w = {
+    name: $('#world-name').val(),
+    values: $('#world-values').val(),
+    description: $('#world-description').val()
+  }
+  // check complete
+  for (let i in w) {
+    if (!w[i] || !w[i].length) {
+      alert('please complete the form');
+      return false;
+    }
+  }
+  db.collection('sessions').doc(roomId).set(w, {merge: true});
+}
 
 function convertTsvIntoObjects(tsvText){
   let tsvRows = tsvText.split('\n');

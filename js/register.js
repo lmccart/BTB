@@ -24,21 +24,24 @@ $('#submit-register').click(register);
 
 function searchSessions() {
   reset();
-  num = Number($('#num').val());
-  for (let o in options) {
-    let opt = options[o];
-    if (opt.participants.length + num <= 6 && !opt.hold) {
-      $('#sessions-options').append('<li class="option" id="'+opt.id+'">'+ opt.datetime + '</li>');
+  setTimeout(function() {
+    num = Number($('#num').val());
+    for (let o in options) {
+      let opt = options[o];
+      if (opt.participants.length + num <= 6 && !opt.hold) {
+        $('#sessions-options').append('<li class="option" id="'+opt.id+'">'+ opt.datetime + '</li>');
+      }
     }
-  }
-  $('.option').click(selectSession);
-  if (!$('.option').length) {
-    $('#sessions-none').show();
-  }
+    $('.option').click(selectSession);
+    if (!$('.option').length) {
+      $('#sessions-none').show();
+    }
+  }, 500);
 }
 
 
 function selectSession() {
+  releaseSession();
   selected_option = $(this).attr('id');
 
   if (options[selected_option].hold) {
@@ -54,6 +57,7 @@ function selectSession() {
   
     // display participant info
     $('#participants').show();
+    $('#participants-info').empty();
     for (let n=1; n<num+1; n++) {
       $('#participants-info').append('<label for="p'+n+'name">Participant '+n+' Name</label>');
       $('#participants-info').append('<input id="p'+n+'name" type="name">');
