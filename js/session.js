@@ -200,9 +200,9 @@ function checkPrompt() {
 
 function submitWorld() {
   let w = {
-    name: $('#world-name').val(),
-    values: $('#world-values').val(),
-    description: $('#world-description').val()
+    world_name: $('#world-name').val(),
+    world_values: $('#world-values').val(),
+    world_description: $('#world-description').val()
   }
   // check complete
   for (let i in w) {
