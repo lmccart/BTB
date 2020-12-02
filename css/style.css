@@ -32,15 +32,6 @@ body {
   color: white;
 }
 
-.intro-border {
-  border: 1em solid #6e00ff;
-}
-
-.register-border {
-  border: 1em solid #ff0047;
-
-}
-
 main {
   display: flex;
   align-items: center;
@@ -50,7 +41,6 @@ main {
 }
 
 section {
-
   max-width: 50%;
 }
 
@@ -75,11 +65,17 @@ p {
   font-style: italic;
   font-size: 1.0em;
   cursor: pointer;
+  font-family: input-mono, monospace;
 }
 
 .button:hover, button:hover {
+  /* border: 4px solid white; */
   background: black;
   color: white;
+}
+
+button:focus, input:focus, textarea:focus {
+  outline: none;
 }
 
 select {
@@ -92,6 +88,7 @@ select {
   font-weight: bold;
   font-style: italic;
   font-size: 1.0em;
+  font-family: input-mono, monospace;
 }
 
 input {
@@ -105,6 +102,18 @@ input {
   font-style: italic;
   font-size: 1.0em;
   width: 20em;
+  font-family: input-mono, monospace;
+}
+
+textarea {
+  border: 4px solid black;
+  padding: 1em;
+  display: inline-block;
+  color: black;
+  background: white;
+  font-size: 1em;
+  width: 16.75vw;
+  font-family: input-mono, monospace;
 }
 
 label {
@@ -126,8 +135,19 @@ table {
   margin-bottom: 2em;
 }
 
+/* INTRO PAGE */
+.intro-border {
+  border: 1em solid #6e00ff;
+}
+
 #intro-page {
   background: #cfc6d0;
+}
+
+
+/* REGISTER PAGE */
+.register-border {
+  border: 1em solid #ff0047;
 }
 
 #register-page {
@@ -141,6 +161,18 @@ table {
   left: 10em;
   color: black;
 }
+
+/* SESSION PAGE */
+
+.session-border {
+  border: 1em solid #6e00ff;
+}
+#session-page {
+  background: #cfc6d0;
+}
+
+#session-page section {
+  max-width: 100%;
 }
 
 
@@ -149,7 +181,8 @@ table {
   height: 600px;
   margin: 10em auto;
   display: block;
-  box-shadow: 0 0 10em pink;
+  border: 1em solid yellow;
+  /* box-shadow: 0 0 10em #6e00ff; */
 }
 
 #overlay {
@@ -173,54 +206,66 @@ table {
   left: 0;
 }
 
+#participant-controls {
+  position: absolute;
+  bottom: 5em;
+  left: 0;
+  width: 100%;
+  text-align: center;
+}
+
 #pause-timer {
-  color: rgba(255, 255, 255, 1.0);
-  font-size: 20vw;
+  color: white;
+  font-size: 10em;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
 }
 
 #notif-holder {
-  width: 90%;
-  height: 100vh;
-  position: absolute;
-  top: 0;
-  left: 5%;
-  z-index: 1;
-  font-size: 12em;
-  text-align: center;
-  display: none;
-  pointer-events: none;
-}
-
-#notif {
   display: flex;
   align-items: center;
   justify-content: center;
-  text-align: center;
-  color: rgba(107, 0, 0, 0.5);
+  width: 100%;
   height: 100%;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 20;
+}
+
+#notif {
+  text-align: center;
+  color: yellow;
+  max-width: 68vw;
+  font-size: 4em;
+  text-align: center;
 }
 
 
 #guide-controls {
+  background: #6e00ff;
   display: none;
   position: absolute;
-  top: 2em;
-  left: 2em;
+  top: 1.5em;
+  left: 1.5em;
   z-index: 5;
-  width: 20vw;
+  width: 22.5vw;
+  text-align: left;
+  padding: 1em;
 }
 
 #next {
-  background:black;
   color: white;
   margin-bottom: 1em;
-  padding: 1em;
-  border: 1px solid black;
 }
 
 .guide-button {
@@ -234,23 +279,24 @@ table {
 #next-prompt {
   width: 100%;
   font-style: italic;
-  color: pink;
+  font-weight: bold;
+  color: white;
 }
 
-textarea {
-  width: 96%;
-  padding: 2%;
-  outline: none;
-  border: 1px solid black;
-}
-
-label {
-  display: block;
-}
 
 #form {
   margin-top: 2em;
   display: none;
+}
+
+#form label {
+  float: left;
+  color: white;
+}
+
+#world-submit {
+  margin-top: 1em;
+  margin-bottom: 0.25em;
 }
 
 /* REGISTRATION */
@@ -267,10 +313,6 @@ label {
 .option:hover, .selected-option {
   background: black;
   color: white;
-}
-
-input {
-  display: block;
 }
 
 .confirm-piece {

@@ -174,6 +174,7 @@ function nextPrompt() {
 }
 
 function resumePrompt(){
+  if (pauseInterval) clearInterval(pauseInterval);
   promptTimer += performance.now();
   promptInterval = setInterval(checkPrompt, 100);
   $('#resume-prompt').hide();
