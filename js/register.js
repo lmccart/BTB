@@ -21,26 +21,41 @@ db.collection('sessions').onSnapshot({}, function(snapshot) {
 // Attach DOM event listeners
 $('#submit-search').click(searchSessions);
 $('#submit-register').click(register);
+$('#back-num').click(showNum);
+$('#back-sessions').click(showSessions);
+
+function showNum() {
+  $('#numParticipants').show();
+  $('#sessions').hide();
+  releaseSession();
+}
+
+function showSessions() {
+  $('#sessions').show();
+  $('#participants').hide();
+  releaseSession();
+}
 
 function searchSessions() {
+  $('#numParticipants').hide();
+  $('#sessions').show();
   reset();
-  setTimeout(function() {
-    num = Number($('#num').val());
-    for (let o in options) {
-      let opt = options[o];
-      if (opt.participants.length + num <= 6 && !opt.hold) {
-        $('#sessions-options').append('<li class="option" id="'+opt.id+'">'+ opt.datetime + '</li>');
-      }
+  num = Number($('#num').val());
+  for (let o in options) {
+    let opt = options[o];
+    if (opt.participants.length + num <= 6 && !opt.hold) {
+      $('#sessions-options').append('<li class="option button" id="'+opt.id+'">'+ opt.datetime + '</li>');
     }
-    $('.option').click(selectSession);
-    if (!$('.option').length) {
-      $('#sessions-none').show();
-    }
-  }, 500);
+  }
+  $('.option').click(selectSession);
+  if (!$('.option').length) {
+    $('#sessions-none').show();
+  }
 }
 
 
 function selectSession() {
+  $('#sessions').hide();
   releaseSession();
   selected_option = $(this).attr('id');
 
@@ -58,11 +73,11 @@ function selectSession() {
     // display participant info
     $('#participants').show();
     $('#participants-info').empty();
+    $('#participants-info').html('<table><trbody></trbody></table>')
     for (let n=1; n<num+1; n++) {
-      $('#participants-info').append('<label for="p'+n+'name">Participant '+n+' Name</label>');
-      $('#participants-info').append('<input id="p'+n+'name" type="name">');
-      $('#participants-info').append('<label for="p'+n+'email" type="email">Participant '+n+' Email</label>');
-      $('#participants-info').append('<input id="p'+n+'email">');
+      $('#participants-info').append('<tr><td><label for="p'+n+'name">Participant '+n+' Name</label></td><td><input id="p'+n+'name" type="name"></td></tr>');
+      $('#participants-info').append('<tr><td><label for="p'+n+'email" type="email">Participant '+n+' Email</label></td><td><input id="p'+n+'email"></td></tr>');
+      $('#participants-info').append('<tr></tr>');
     }
   }
 }
@@ -145,6 +160,7 @@ function reset() {
 }
 
 function releaseSession() {
+  $('.option').removeClass('selected-option');
   if (selected_option !== -1) {
     options[selected_option].hold = false;
     db.collection('sessions').doc(selected_option).set({hold: false}, {merge: true});
