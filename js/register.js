@@ -44,7 +44,9 @@ function searchSessions() {
   for (let o in options) {
     let opt = options[o];
     if (opt.participants.length + num <= 6 && !opt.hold) {
-      $('#sessions-options').append('<li class="option button" id="'+opt.id+'">'+ opt.datetime + '</li>');
+      let date = moment(opt.datetime).format("YYYY-MM-DD HH:mm:ss");
+      console.log(date)
+      $('#sessions-options').append('<li class="option button" id="'+opt.id+'">'+ date + '</li>');
     }
   }
   $('.option').click(selectSession);

@@ -168,7 +168,6 @@ table {
   border: 1em solid #6e00ff;
 }
 #session-page {
-  background: #cfc6d0;
 }
 
 #session-page section {
@@ -177,13 +176,14 @@ table {
 
 
 #meet { 
-  width: 70vw;
-  height: 600px;
-  margin: 10em auto;
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
   display: block;
-  border: 1em solid yellow;
-  /* box-shadow: 0 0 10em #6e00ff; */
 }
+
 
 #overlay {
   width: 100%;
@@ -195,6 +195,7 @@ table {
   color: white;
   display: none;
   z-index: 3;
+  pointer-events: none;
 }
 
 #ytPlayer {
@@ -204,6 +205,7 @@ table {
   position: absolute;
   top: -10%;
   left: 0;
+  pointer-events: none;
 }
 
 #participant-controls {
@@ -248,6 +250,7 @@ table {
   max-width: 68vw;
   font-size: 4em;
   text-align: center;
+  pointer-events: none;
 }
 
 

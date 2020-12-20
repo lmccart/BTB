@@ -7,11 +7,11 @@ let db = firebase.firestore(app);
 console.log(db)
 
 let times = [
-  '2021-01-28T00:10:00 GMT-0700',
-  '2021-01-28T00:11:00 GMT-0700',
-  '2021-01-28T00:12:00 GMT-0700',
-  '2021-01-28T00:13:00 GMT-0700',
-  '2021-01-28T00:14:00 GMT-0700',
+  '2021-01-28T00:10:00 GMT-0800 (Pacific Standard Time)',
+  '2021-01-28T00:11:00 GMT-0800 (Pacific Standard Time)',
+  '2021-01-28T00:12:00 GMT-0800 (Pacific Standard Time)',
+  '2021-01-28T00:13:00 GMT-0800 (Pacific Standard Time)',
+  '2021-01-28T00:14:00 GMT-0800 (Pacific Standard Time)',
 ];
 
 // populateSlots();
